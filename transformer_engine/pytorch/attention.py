@@ -12,7 +12,7 @@ from pkg_resources import packaging
 
 import torch
 
-from flash_attn.flash_attn_interface import flash_attn_unpadded_func
+from flash_attn.flash_attn_interface import flash_attn_varlen_func
 
 import transformer_engine_extensions as tex
 from transformer_engine.pytorch.cpp_extensions.fused_attn import (
@@ -397,7 +397,7 @@ class FlashAttention(torch.nn.Module):
             device=query_layer.device)
 
         with self.attention_dropout_ctx():
-            output = flash_attn_unpadded_func(
+            output = flash_attn_varlen_func(
                 query_layer, key_layer, value_layer, cu_seqlens, cu_seqlens, max_seqlen, max_seqlen,
                 self.attention_dropout if self.training else 0.0,
                 softmax_scale=1.0/self.norm_factor, causal=self.attn_causal_mask,
